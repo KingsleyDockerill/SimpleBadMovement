@@ -31,6 +31,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        RaycastHit hit;
         const float MIN_X = 0.0f;
         const float MAX_X = 360.0f;
         const float MIN_Y = -90.0f;
@@ -59,11 +60,17 @@ public class Player : MonoBehaviour
         
         if(xMov != 0 && canMove)
         {
-            transform.position += transform.forward * xMov * speed * Time.deltaTime;
+            if(xMov > 0 && !Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 1f))
+                transform.position += transform.forward * xMov * speed * Time.deltaTime;
+            else if (xMov < 0 && !Physics.Raycast(transform.position, transform.TransformDirection(-Vector3.forward), out hit, 1f))
+                transform.position += transform.forward * xMov * speed * Time.deltaTime;
         }
         if (yMov != 0 && canMove)
         {
-            transform.position += transform.right * yMov * speed * Time.deltaTime;
+            if (yMov > 0 && !Physics.Raycast(transform.position, transform.TransformDirection(Vector3.right), out hit, 1f))
+                transform.position += transform.right * yMov * speed * Time.deltaTime;
+            else if (yMov < 0 && !Physics.Raycast(transform.position, transform.TransformDirection(-Vector3.right), out hit, 1f))
+                transform.position += transform.right * yMov * speed * Time.deltaTime;
         }
         if(Input.GetKeyDown(KeyCode.Space) && grounded)
         {
@@ -96,7 +103,6 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(!collision.collider.CompareTag("NonClimbable"))
-            grounded = true;
+        grounded = true;
     }
 }
